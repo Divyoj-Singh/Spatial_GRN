@@ -1,0 +1,14 @@
+There are a total of 2^3 = 8 states.
+
+000 - (Unreal) - black
+001 - (Single) - red
+010 - (Single) - green
+011 - (Mixed) - yellow
+100 - (Single) - blue
+101 - (Mixed) - magneta
+110 - (Mixed) - cyan
+111 - (Unreal) - white
+
+Deciding states
+We decide the state based on a threshold. We can keep this as 0.1 (post g/k normalization).
+
