@@ -15,18 +15,19 @@ np, pd, plt, tqdm, time, njit, prange, animator, mal, os = helpers.libraries()
 
 
 # Easy Change Parameters
-plotName = "Tristable"
+plotName = "Bistable"
 plotParent = os.getcwd() + "/Plots"
 snapit = False
+saveit = True
 
 # Parameter set details
-ds_i, pset_class = 82, "Sheet1"
+ds_i, pset_class = 5, "Sheet1"
 # Execution timesteps
-T = 2000
+T = 6000
 
 # Physical Parameters
 # Diffusion (& Anisotropy)
-D = 8*1e-2
+D = 7.4*1e-3
 
 print(f"Starting with \033[95m ({nx}, {ny}) \033[0m lattice for \033[92m {T} \033[0m units. \n")
 
@@ -52,7 +53,6 @@ sol[0] = helpers.patch(0, nx, 0, ny, helpers.fill_rand)
 def f(N):
     """Enter population number 'N' and receive the change"""
     # Put the function here
-    # return (np.array([10,20,30])-N)/4
     dN = np.empty(nodes)
     # TODO: Enter equation when needed
 
@@ -69,18 +69,17 @@ def DeltaN(prev):
     """Compute deltas for every point in space based on current values"""
     # Create a new empty instance
     delta_earth = np.zeros((nx, ny, nodes))
-    for i in (prange((nx)*(ny))):
+    for i in (prange((nx+1)*(ny))):
         # Coordinates from just one direction
-        x = i // (nx + 1)
-        y = i - x*(ny)
+        x = i // (nx+1)
+        y = i - x*(ny+1)
         # Calculating diffusion contribution
         d_next_x, d_next_y = p_i(np.array([x+1, y+1]))
         d_prev_x, d_prev_y = p_i(np.array([x-1, y-1]))
         diffusion = (( prev[d_next_x][y] + prev[d_prev_x][y] - 2*prev[x][y] )/dx**2) + (( prev[x][d_next_y] + prev[x][d_prev_y] - 2*prev[x][y]  )/dy**2)
 
         # Cumulated Delta
-        # delta_earth[x][y] = f(prev[x][y]) + diffusion
-        delta_earth[x][y] = f(prev[x][y])
+        delta_earth[x][y] = f(prev[x][y]) + diffusion*D
 
         
     # Finished Iteration
@@ -107,7 +106,7 @@ helpers.animation(sol_p)
 # 5. Histogram of final states
 
 # Saving it
-helpers.save_adv(plotParent, plotName, sol_p, {"sheet":pset_class, "pset_id":ds_i, "diff_coeff":D,}, snapshots = snapit)
+if(saveit): helpers.save_adv(plotParent, plotName, sol_p, {"sheet":pset_class, "pset_id":ds_i, "diff_coeff":D,}, snapshots = snapit)
 # Showing Plots vs Saving them
 # User controlled
 

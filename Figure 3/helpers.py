@@ -93,15 +93,11 @@ def p_i(x):
     # Neumann
     # Send to first if before first asked
     # Send to last if after last asked
-    y = [x[0], x[1]]
-    if x[0] == -1:
-        y[0] = 0  # X
-    if x[0] == nx + 1:
-        y[0] = nx  # X
-    if x[1] == -1:
-        y[1] = 0  # Y
-    if x[1] == ny + 1:
-        y[1] = ny  # Y
+    y = np.copy(x)
+    if x[0] == -1: y[0] = 0  # X
+    if x[0] == nx + 1: y[0] = nx  # X
+    if x[1] == -1: y[1] = 0  # Y
+    if x[1] == ny + 1: y[1] = ny  # Y
     return y
 
 
@@ -124,7 +120,7 @@ def patch(x1, x2, y1, y2, fill_value):
         for y in range(y1, y2):
             sol_1[x][y] = fill_value(x, y)
     sol_1_p = np.moveaxis(np.moveaxis(sol_1, 0, -1), 0, -1)
-    print(f"Before {np.shape(sol_1)}, after {np.shape(sol_1_p)}")
+    # print(f"Before {np.shape(sol_1)}, after {np.shape(sol_1_p)}")
     return sol_1
 
 
@@ -164,13 +160,14 @@ def animation(sol_p):
     def lilly(s):
         plt.clf()
         m = 1
-        probe = s * 10
-        plt.imshow((sol_p[0][probe]), cmap="jet", interpolation="gaussian")
+        probe = s * 100
+        # plt.imshow((sol_p[0][probe]), cmap="jet", interpolation="gaussian")
+        plt.imshow((sol_p[0][probe]), cmap="jet",)
         plt.title(f"At frame {probe}")
         plt.colorbar()
 
     anim = animator.FuncAnimation(
-        plt.figure(), lilly, range(len(sol_p[0]) // 10), interval=10
+        plt.figure(), lilly, range(len(sol_p[0]) // 100), interval=10
     )
     plt.show()
 
@@ -217,7 +214,8 @@ def save_adv(savePath, plotName, sol_p, pset_deets, snapshots):
         data = open((folderName+"/data.txt"), "a")
         for i in range(3):
             plt.clf()
-            plt.imshow((sol_p[i][-1]), cmap="jet", interpolation="gaussian")
+            plt.imshow((sol_p[i][-1]), cmap="bwr", interpolation="gaussian")
+            # plt.imshow((sol_p[i][-1]), cmap="jet")
             plt.title(f"Morphogen {i+1}")
             plt.colorbar()
             plt.savefig(folderName + "/" + f"Morphogen {i+1}")
@@ -228,6 +226,7 @@ def save_adv(savePath, plotName, sol_p, pset_deets, snapshots):
     
     # Synthesize the metadata file and save it
     # Metadata format, look at metadata_template.txt
-    md_temp = f"""SCSCSCSCSCSCSCSCSCSC\n\nAuthor:\nChinmay K Haritas,\n@CSB Lab | Indian Institute of Science, Bengaluru\n\nDate:\n{time.strftime("%Y %b %d - %H:%M:%S")}\n\nPlot Name:\n{plotName}\n\nParameter Set:\nSheet Name: {pset_deets['sheet']}\nIndex: {pset_deets['pset_id']} (Row + 2)\nDiffusion: {pset_deets['diff_coeff']} units\nhttps://indianinstituteofscience-my.sharepoint.com/:x:/g/personal/ushasiroy_iisc_ac_in/EZB1LguReEZOtHy_eycekwUBJjFwGmgtSGyl3wamuqapSQ?e=SBd4Ik\n"""
+    # md_temp = f"""SCSCSCSCSCSCSCSCSCSC\n\nAuthor:\nChinmay K Haritas,\n@CSB Lab | Indian Institute of Science, Bengaluru\n\nDate:\n{time.strftime("%Y %b %d - %H:%M:%S")}\n\nPlot Name:\n{plotName}\n\nParameter Set:\nSheet Name: {pset_deets['sheet']}\nIndex: {pset_deets['pset_id']} (Row + 2)\nDiffusion: {pset_deets['diff_coeff']} units\nhttps://indianinstituteofscience-my.sharepoint.com/:x:/g/personal/ushasiroy_iisc_ac_in/EZB1LguReEZOtHy_eycekwUBJjFwGmgtSGyl3wamuqapSQ?e=SBd4Ik\n"""
+    md_temp = f"""SCSCSCSCSCSCSCSCSCSC\n\nAuthor:\nChinmay K Haritas,\n@CSB Lab | Indian Institute of Science, Bengaluru\n\nDate:\n{time.strftime("%Y %b %d - %H:%M:%S")}\n\nPlot Name:\n{plotName}\n\nParameter Set:\nSheet Name: {pset_deets['sheet']}\nIndex: {pset_deets['pset_id']} (Row + 2)\nDiffusion: {pset_deets['diff_coeff']} units\n"""
     with open((folderName+"/Meta.txt"), "w") as meta:
         meta.write(md_temp)

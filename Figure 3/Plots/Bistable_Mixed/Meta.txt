@@ -1,0 +1,16 @@
+SCSCSCSCSCSCSCSCSCSC
+
+Author:
+Chinmay K Haritas,
+@CSB Lab | Indian Institute of Science, Bengaluru
+
+Date:
+2021 Nov 17 - 11:01:12
+
+Plot Name:
+Bistable (Mixed State)
+
+Parameter Set:
+Sheet Name: Testing
+Index: 3 (Row + 2)
+Diffusion: 0.012 units

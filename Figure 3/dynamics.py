@@ -15,11 +15,11 @@ from helpers import hill, p_i
 np, pd, plt, tqdm, time, njit, prange, animator, mal, os = helpers.libraries()
 
 # Parameter set details
-ds_i, pset_class = 11, "Sheet1"
+ds_i, pset_class = 12, "Sheet1"
 r = False
 
 # Execution timesteps
-T = 100
+T = 40
 
 print(f"Starting with \033[95m ({nx}, {ny}) \033[0m lattice for \033[92m {T} \033[0m units. \n")
 
@@ -79,7 +79,8 @@ def model(N):
 
 
 # Initial Conditions
-ics = np.random.rand(20, 3)*15.0
+ics = np.random.rand(100, 3)*15
+# ics = [0, 0, 0]
 
 # Create solution mesh
 sol = np.ones((T, len(ics), nodes)) * 0.0
@@ -94,12 +95,16 @@ for t in tqdm(range(1, T)):
 
 # Convert to printable form
 sol_p = helpers.gbyk_normalization(np.moveaxis(np.moveaxis(sol, 1, 0), 2, 0), gbyk=g/k)
+# sol_p = (np.moveaxis(np.moveaxis(sol, 1, 0), 2, 0))
 
 # End states
 finals_A = np.array([(sol_p[0][i][-1]) for i in range(len(ics))])
 finals_B = np.array([(sol_p[1][i][-1]) for i in range(len(ics))])
 finals_C = np.array([(sol_p[2][i][-1]) for i in range(len(ics))])
+
 finals = [finals_A, finals_B, finals_C]
+finalz = [finals_A-np.mean(finals_A), finals_B-np.mean(finals_B), finals_C-np.mean(finals_C)]
+meanz = [np.mean(finals_A), np.mean(finals_B), np.mean(finals_C)]
 
 # Color the plots
 
@@ -108,45 +113,66 @@ def state(ic):
     # Check the final state
     state = ""
     for i in range(3):
-        if(finals[i][ic] > 0.2): state+="1"
+        # Added Z-Score Normalization
+        if(finals[i][ic] > np.mean(finals[i])): state+="1"
         else: state+="0"
     return state
 
 # Assign Color to State
 def coloring(ic):
     st = state(ic)
-    if(st == "000"): return "k"
+    if(st == "000"): return "w"
     if(st == "001"): return "r"
     if(st == "010"): return "g"
     if(st == "011"): return "y"
     if(st == "100"): return "b"
     if(st == "101"): return "m"
     if(st == "110"): return "c"
-    if(st == "111"): return "W"
+    if(st == "111"): return "k"
 
 
 # Color for each IC
 colors = [coloring(i) for i in range(len(ics))]
 
 # Plots
-fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18,6))
+# Creates subplots of 2 rows and 3 columns
+fig, ax = plt.subplots(2, 3, figsize=(18, 12))
+
+# fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18,6))
 for ic in tqdm(prange(len(ics))):
     # Morphogen Initial Conditions
     for i in range(nodes):
-        ax = [ax1, ax2, ax3][i]
+        # ax = [ax1, ax2, ax3][i]
         if(not r):
-            ax.plot((sol_p[i][ic][3:]), c = colors[ic])
+            # Main Stuff Here - No repressilator
+            
+            # First row for g/k normalization
+            ax[0][i].plot( ((sol_p[i][ic][0:])) , c = colors[ic])
+            ax[0][i].set_title(f"Morphogen {i+1} (g/k={ (g/k)[i]:.2f})")
+            ax[0][i].set_xlabel("T")
+            ax[0][i].set_ylabel(f"Level of {i+1}")
+
+            # Second row for z-score normalization
+            ax[1][i].plot( ((sol_p[i][ic][0:]-meanz[i])) , c = colors[ic])
+            ax[1][i].set_title(f"Morphogen {i+1} (Z={meanz[i]:.2f})")
+            ax[1][i].set_xlabel("T")
+            ax[1][i].set_ylabel(f"Level of {i+1}")
         else:
+            # Special Case- Repressilator
             ax.plot((sol_p[i][ic][3:]))
-        ax.set_title(f"Morphogen {i+1}")
-        ax.set_xlabel("T")
-        ax.set_ylabel(f"Level of {i+1}")
-        # ax.set_aspect()
 
-
+# Good looking plots
 plt.tight_layout()
 
-# Animation
+# We need one more plot
+# Histogram of final states
+fig, ax = plt.subplots(1, 1, figsize=(8, 4))
+states = [state(i) for i in range(len(ics))]
+ax.hist(states, bins=5)
+# Title and labels
+ax.set_title(f"Final State Histogram (Total = {len(ics)})")
+ax.set_xlabel("State")
+ax.set_ylabel("Frequency")
+
 
 print('All done, Ciao')
-# %%

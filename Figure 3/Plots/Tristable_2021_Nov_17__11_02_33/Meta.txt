@@ -1,0 +1,16 @@
+SCSCSCSCSCSCSCSCSCSC
+
+Author:
+Chinmay K Haritas,
+@CSB Lab | Indian Institute of Science, Bengaluru
+
+Date:
+2021 Nov 17 - 11:02:33
+
+Plot Name:
+Tristable
+
+Parameter Set:
+Sheet Name: Testing
+Index: 1 (Row + 2)
+Diffusion: 0.012 units
