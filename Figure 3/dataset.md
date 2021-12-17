@@ -1,6 +1,7 @@
-# Dataset description
+# Dataset Description
 
 Chinmay K Haritas
+
 Last Edited: 2021-Nov-16
 
 # Sheet1
@@ -8,6 +9,10 @@ Contains data from the Atchuta's extended dataset.
 
 # Paper
 Contains the datasets published in JRSI.
+| Index  | Description |
+| ------------- | ------------- |
+| 0-8  | Bistable |
+| 9-10  | Tristable |
 
 # Testing
 Contains datasets created by me. These are curated to have very specific properties.

@@ -27,6 +27,7 @@ from tt_vars import *
 import os
 
 sns.set_theme(context="notebook", style="ticks", font="arial", font_scale=1.2)
+nowString = time.strftime("_%Y_%b_%d__%H_%M_%S")
 
 # Returns all libraries
 def libraries():
@@ -120,7 +121,6 @@ def patch(x1, x2, y1, y2, fill_value):
         for y in range(y1, y2):
             sol_1[x][y] = fill_value(x, y)
     sol_1_p = np.moveaxis(np.moveaxis(sol_1, 0, -1), 0, -1)
-    # print(f"Before {np.shape(sol_1)}, after {np.shape(sol_1_p)}")
     return sol_1
 
 
@@ -157,25 +157,46 @@ def gbyk_normalization(sol_p, gbyk):
 # Plotting tools
 def animation(sol_p):
     # Artists
+    # scrubby = 10
     def lilly(s):
         plt.clf()
         m = 1
-        probe = s * 100
+        probe = s * 10
         # plt.imshow((sol_p[0][probe]), cmap="jet", interpolation="gaussian")
-        plt.imshow((sol_p[0][probe]), cmap="jet",)
+        plt.imshow((sol_p[0][probe]), cmap="jet")
+        # plt.imshow((sol_p[0][probe]), cmap="coolwarm", interpolation="gaussian")
         plt.title(f"At frame {probe}")
         plt.colorbar()
 
     anim = animator.FuncAnimation(
-        plt.figure(), lilly, range(len(sol_p[0]) // 100), interval=10
+        plt.figure(), lilly, range(len(sol_p[0]) // 10), interval=100
     )
     plt.show()
+    anim.save(f"animtion_{nowString}.mp4", writer="ffmpeg")
+
+def rgb_plot(sol_p):
+    """Plots the solution in RGB space"""
+    # First convert sol_p to sol
+    sol = np.moveaxis(sol_p, 0, -1)
+    scrubby = 1
+
+    # Artists
+    def lilly(s):
+        plt.clf()
+        probe = s * scrubby
+        plt.imshow((sol[probe]), interpolation="gaussian")
+        plt.title(f"At frame {probe}")
+
+    anim = animator.FuncAnimation(
+        plt.figure(), lilly, range(len(sol) // scrubby), interval=10
+    )
+    plt.show()
+    anim.save(f"animtionRGB_{nowString}.mp4", writer="ffmpeg")
 
 
 # Saving Tools
 def save_adv(savePath, plotName, sol_p, pset_deets, snapshots):
     # Time of saving
-    nowString = time.strftime("_%Y_%b_%d__%H_%M_%S")
     folderName = savePath + "/" + plotName + nowString
     """
     # Advanced saving options
@@ -222,6 +243,7 @@ def save_adv(savePath, plotName, sol_p, pset_deets, snapshots):
             np.savetxt(data, sol_p[i][-1])
         data.close()    
 
+    # Save the animation
 
     
     # Synthesize the metadata file and save it
