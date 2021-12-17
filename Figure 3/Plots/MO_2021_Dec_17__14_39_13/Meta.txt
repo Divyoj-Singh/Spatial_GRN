@@ -1,0 +1,16 @@
+SCSCSCSCSCSCSCSCSCSC
+
+Author:
+Chinmay K Haritas,
+@CSB Lab | Indian Institute of Science, Bengaluru
+
+Date:
+2021 Dec 17 - 14:43:01
+
+Plot Name:
+MO
+
+Parameter Set:
+Sheet Name: Sheet1
+Index: 32 (Row + 2)
+Diffusion: 0.0074 units

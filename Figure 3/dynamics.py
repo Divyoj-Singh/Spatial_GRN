@@ -15,11 +15,11 @@ from helpers import hill, p_i
 np, pd, plt, tqdm, time, njit, prange, animator, mal, os = helpers.libraries()
 
 # Parameter set details
-ds_i, pset_class = 12, "Sheet1"
+ds_i, pset_class = 1, "Testing"
 r = False
 
 # Execution timesteps
-T = 40
+T = 100
 
 print(f"Starting with \033[95m ({nx}, {ny}) \033[0m lattice for \033[92m {T} \033[0m units. \n")
 
@@ -163,6 +163,9 @@ for ic in tqdm(prange(len(ics))):
 
 # Good looking plots
 plt.tight_layout()
+
+# Save ODEs
+plt.savefig("ODE Plot.svg", dpi="figure")
 
 # We need one more plot
 # Histogram of final states

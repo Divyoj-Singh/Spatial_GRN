@@ -155,7 +155,7 @@ def gbyk_normalization(sol_p, gbyk):
 
 
 # Plotting tools
-def animation(sol_p):
+def animation(sol_p, save=False, folderName=""):
     # Artists
     # scrubby = 10
     def lilly(s):
@@ -169,16 +169,19 @@ def animation(sol_p):
         plt.colorbar()
 
     anim = animator.FuncAnimation(
-        plt.figure(), lilly, range(len(sol_p[0]) // 10), interval=100
+        plt.figure(), lilly, range(len(sol_p[0]) // 10), interval=10
     )
-    plt.show()
-    anim.save(f"animtion_{nowString}.mp4", writer="ffmpeg")
 
-def rgb_plot(sol_p):
+    # plt.show()
+    print("Saving animation now...")
+    # Saves at given location
+    if save: anim.save(f"{folderName}/animation.gif")
+
+def rgb_plot(sol_p, save=False, folderName=""):
     """Plots the solution in RGB space"""
     # First convert sol_p to sol
     sol = np.moveaxis(sol_p, 0, -1)
-    scrubby = 1
+    scrubby = 10
 
     # Artists
     def lilly(s):
@@ -190,8 +193,11 @@ def rgb_plot(sol_p):
     anim = animator.FuncAnimation(
         plt.figure(), lilly, range(len(sol) // scrubby), interval=10
     )
-    plt.show()
-    anim.save(f"animtionRGB_{nowString}.mp4", writer="ffmpeg")
+
+    # plt.show()
+    # Saves at given location
+    print("Saving RGB animation...")
+    if save: anim.save(f"{folderName}/animation_RGB.gif")
 
 
 # Saving Tools
@@ -202,7 +208,7 @@ def save_adv(savePath, plotName, sol_p, pset_deets, snapshots):
     # Advanced saving options
     Produces fast reproducible and usable plots with metadata.
     Saves three files.
-    1. New Folder with Plot Name (schemes)
+    1. New Fo0lder with Plot Name (schemes)
     2. Plot
     3. Metadata
 
@@ -224,10 +230,10 @@ def save_adv(savePath, plotName, sol_p, pset_deets, snapshots):
     # Parallely add the data
     if(snapshots):
         # For repressilator
-        for t in range(0, 20):
+        for t in range(0, 6):
             for i in range(3):
                 plt.clf()
-                plt.imshow((sol_p[i][t*7]), cmap="jet", interpolation="gaussian")
+                plt.imshow((sol_p[i][t*(3000/6)]), cmap="jet", interpolation="gaussian")
                 plt.title(f"Morphogen {i+1}")
                 plt.colorbar()
                 plt.savefig(folderName + "/" + f"Morphogen {i+1}@{t*7}")
@@ -235,17 +241,18 @@ def save_adv(savePath, plotName, sol_p, pset_deets, snapshots):
         data = open((folderName+"/data.txt"), "a")
         for i in range(3):
             plt.clf()
-            plt.imshow((sol_p[i][-1]), cmap="bwr", interpolation="gaussian")
+            plt.imshow((sol_p[i][-1]), cmap="cool", interpolation="gaussian")
             # plt.imshow((sol_p[i][-1]), cmap="jet")
             plt.title(f"Morphogen {i+1}")
             plt.colorbar()
             plt.savefig(folderName + "/" + f"Morphogen {i+1}")
             np.savetxt(data, sol_p[i][-1])
-        data.close()    
+        data.close()
 
     # Save the animation
+    rgb_plot(sol_p, True, folderName)
+    animation(sol_p, True, folderName)
 
-    
     # Synthesize the metadata file and save it
     # Metadata format, look at metadata_template.txt
     # md_temp = f"""SCSCSCSCSCSCSCSCSCSC\n\nAuthor:\nChinmay K Haritas,\n@CSB Lab | Indian Institute of Science, Bengaluru\n\nDate:\n{time.strftime("%Y %b %d - %H:%M:%S")}\n\nPlot Name:\n{plotName}\n\nParameter Set:\nSheet Name: {pset_deets['sheet']}\nIndex: {pset_deets['pset_id']} (Row + 2)\nDiffusion: {pset_deets['diff_coeff']} units\nhttps://indianinstituteofscience-my.sharepoint.com/:x:/g/personal/ushasiroy_iisc_ac_in/EZB1LguReEZOtHy_eycekwUBJjFwGmgtSGyl3wamuqapSQ?e=SBd4Ik\n"""

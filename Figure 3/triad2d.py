@@ -15,15 +15,15 @@ np, pd, plt, tqdm, time, njit, prange, animator, mal, os = helpers.libraries()
 
 
 # Easy Change Parameters
-plotName = "Bistable"
+plotName = "Tristable"
 plotParent = os.getcwd() + "/Plots"
 snapit = False
 saveit = True
 
 # Parameter set details
-ds_i, pset_class = 5, "Sheet1"
+ds_i, pset_class = 1, "Testing"
 # Execution timesteps
-T = 6000
+T = 3000
 
 # Physical Parameters
 # Diffusion (& Anisotropy)
@@ -99,7 +99,8 @@ sol_p = helpers.gbyk_normalization(np.moveaxis(np.moveaxis(np.moveaxis(sol, 0, -
 
 # Listing the kinds of plots
 # 1. Animation
-helpers.animation(sol_p)
+# helpers.rgb_plot(sol_p)
+# helpers.animation(sol_p)
 # 2. Animation snapshots
 # 3. All 3 states at a given time
 # 4. Special State Plot
